@@ -1,0 +1,18 @@
+[Unit]
+Description=JACK service
+PartOf=pypatcher_callback.service jacktrip.service
+
+[Service]
+LimitRTPRIO=infinity
+LimitMEMLOCK=infinity
+LimitRTTIME=infinity
+EnvironmentFile=/etc/jacktrip_pypatcher/jackd.conf
+ExecStart=/usr/bin/jackd -d dummy -p $FPP
+Restart=always
+RestartSec=2s
+# Use a dedicated user to run our service
+User=sam
+
+[Install]
+
+WantedBy=default.target

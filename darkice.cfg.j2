@@ -1,0 +1,23 @@
+[general]
+duration      = 0
+bufferSecs    = 5
+
+[input]
+device        = jack
+sampleRate    = 48000
+bitsPerSample = 16
+channel       = 2
+
+[icecast2-0]
+bitrateMode   = cbr
+format        = mp3
+bitrate       = 128
+server        = {{ icecast_server_url }}
+port          = {{ icecast_port }}
+password      = {{ icecast_password }}
+mountPoint    = {{ icecast_mount }}
+name          = Jacktrip Stream
+description   = Live streaming audio from a JackTrip PyPatcher session
+url           = https://{{ icecast_server_url }}/{{ icecast_mount }}
+genre         = music
+public        = no
