@@ -1,20 +1,8 @@
 ---
 - name: Install pypatcher
   hosts: pypatcher
+  become: yes
   tasks:
-    - name: Create sam user and add to sudo & audio groups
-      user:
-        name=sam
-        groups=sudo,audio
-        append=yes
-        state=present
-        createhome=yes
-    - name: Sudo without password for sudo group
-      copy:
-        content: '%sudo ALL=(ALL:ALL) NOPASSWD:ALL'
-        dest: /etc/sudoers.d/sudo_nopasswd
-        mode: 0440
-      become: yes
     - name: Install dependencies
       apt:
         pkg:
@@ -24,57 +12,63 @@
         - python3-pip
         - darkice
         update_cache: yes
-      become: yes
       environment:
         DEBIAN_FRONTEND: noninteractive
+
+    - name: Configure jackd realtime priority
+      command: mv /etc/security/limits.d/audio.conf.disabled /etc/security/limits.d/audio.conf
+
     - name: Create pypatcher_deps container
       command: docker create sandreae/pypatcher_deps:latest
       register: container_id
-      become: yes
+
     - name: Copy dependencies from container
       command: docker cp {{ container_id.stdout}}:build/. /usr/local/bin/
-      become: yes
-    - name: Install dependencies
-      apt:
-        pkg:
-        - mpg123
-        - python3-pip
-        - darkice
-    - name: Fetch loung-music
+
+    - name: Fetch lounge-music
       get_url:
         url: "{{ lounge_music_url }}"
         dest: /home/sam/lounge-music.mp3
         mode: '0440'
+  
     - name: Template and send darkice.cfg
       template:
-        src: darkice.cfg.j2
+        src: templates/darkice.cfg.j2
         dest: /etc/darkice.cfg
+
     - name: Git checkout jacktrip_pypatcher
       git:
         repo: 'https://github.com/noiseorchestra/jacktrip_pypatcher'
         dest: /home/sam/jacktrip_pypatcher
         version: 2.0.0
+
     - name: Install pypatcher python dependencies
       command: python3 -m pip install -r /home/sam/jacktrip_pypatcher/requirements.txt
+
     - name: Copy service files
       copy:
         src: "{{ item }}"
         dest: "/etc/systemd/system/"
       with_fileglob:
         - "services/*.service"      
+        
+    - name: Install systemd config
+      copy:
+        src: "{{ item }}"
+        dest: "/etc/systemd/"
+      with_fileglob:
+        - "templates/*.conf"  
+        
     - name: Make jacktrip_pypatcher config folder
       command: mkdir -p /etc/jacktrip_pypatcher
-      become: yes
-    - name: Copy service config files
+
+    - name: Copy py_patcher config files
       copy:
         src: "{{ item }}"
         dest: "/etc/jacktrip_pypatcher/"
       with_fileglob:
-        - "services/config/*.conf"    
-      become: yes
-    - name: Reload systemd
-      command: systemctl daemon-reload
-      become: yes
+        - "services/config/*.conf"      
+
     - name: Start services
       command: "{{ item }}"
       with_items:
@@ -83,7 +77,7 @@
       - systemctl start pypatcher_darkice.service
       - systemctl start pypatcher_callback.service
       - systemctl start pypatcher_watchgod.service
-      become: yes
+
     - name: Enable services
       command: "{{ item }}"
       with_items:
@@ -92,4 +86,15 @@
       - systemctl enable pypatcher_darkice.service
       - systemctl enable pypatcher_callback.service
       - systemctl enable pypatcher_watchgod.service
-      become: yes
+
+    - name: Allow port range 61002-61040/udp
+      community.general.ufw:
+        rule: allow
+        port: 61002:61040
+        proto: udp
+        
+    - name: Allow port 4464/tcp
+      community.general.ufw:
+        rule: allow
+        port: 4464
+        proto: tcp
