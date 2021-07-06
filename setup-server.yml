@@ -46,7 +46,7 @@
       user:
         name: "{{ user }}"
         state: present
-        groups: sudo
+        groups: sudo, audio
         append: true
         create_home: true
         shell: /bin/bash
