@@ -1,6 +1,6 @@
 # py_patcher ansible playbook
 
-## prerequisits
+## prerequisite
 
 - provision server
 - create `sam` user with sudo rights
