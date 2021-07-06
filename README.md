@@ -7,7 +7,7 @@
 
 ## Run
 
-```
+```sh
 # setup the server with required user and permissions
 # copies ssh keys from default users home directory
 $ ansible-playbook setup-server.yml -u root
@@ -31,5 +31,5 @@ icecast_password=BadPassWord
 
 ## TODO
 
-- automate server deploy and initial setup
+- automate server deploy
 - change requirement for `sam` user
