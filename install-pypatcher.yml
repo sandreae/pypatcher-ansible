@@ -89,4 +89,5 @@
       - systemctl enable pypatcher_callback.service
       - systemctl enable pypatcher_watchgod.service
 
-    
+    - name: Reboot the machine
+      reboot:
