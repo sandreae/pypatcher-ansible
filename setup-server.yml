@@ -11,6 +11,22 @@
     - name: Install Prerequisites
       apt: name=aptitude update_cache=yes state=latest force_apt_get=yes
 
+    - name: Install required system packages
+      apt: name={{ sys_packages }} state=latest
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt: update_cache=yes name=docker-ce state=latest
+
 # Sudo Group Setup
     - name: Make sure we have a 'sudo' group
       group:
@@ -47,13 +63,6 @@
         state: present
         regexp: '^#?PermitRootLogin'
         line: 'PermitRootLogin prohibit-password'
-
-# Install Packages
-    - name: Update apt
-      apt: update_cache=yes
-
-    - name: Install required system packages
-      apt: name={{ sys_packages }} state=latest
 
 # UFW Setup
     - name: UFW - Allow SSH connections
