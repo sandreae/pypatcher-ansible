@@ -1,0 +1,4 @@
+---
+user: sam
+copy_local_key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+sys_packages: [ 'git', 'ufw']

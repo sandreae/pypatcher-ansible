@@ -2,6 +2,9 @@
 - name: Install pypatcher
   hosts: pypatcher
   become: yes
+  vars_files:
+  - vars/default.yml
+
   tasks:
     - name: Install dependencies
       apt:
@@ -16,7 +19,7 @@
         DEBIAN_FRONTEND: noninteractive
 
     - name: Configure jackd realtime priority
-      command: mv /etc/security/limits.d/audio.conf.disabled /etc/security/limits.d/audio.conf
+      command: cp /etc/security/limits.d/audio.conf.disabled /etc/security/limits.d/audio.conf
 
     - name: Create pypatcher_deps container
       command: docker create sandreae/pypatcher_deps:latest
@@ -28,7 +31,7 @@
     - name: Fetch lounge-music
       get_url:
         url: "{{ lounge_music_url }}"
-        dest: /home/sam/lounge-music.mp3
+        dest: /home/{{user}}/lounge-music.mp3
         mode: '0440'
   
     - name: Template and send darkice.cfg
@@ -39,11 +42,11 @@
     - name: Git checkout jacktrip_pypatcher
       git:
         repo: 'https://github.com/noiseorchestra/jacktrip_pypatcher'
-        dest: /home/sam/jacktrip_pypatcher
+        dest: /home/{{user}}/jacktrip_pypatcher
         version: 2.0.0
 
     - name: Install pypatcher python dependencies
-      command: python3 -m pip install -r /home/sam/jacktrip_pypatcher/requirements.txt
+      command: python3 -m pip install -r /home/{{user}}/jacktrip_pypatcher/requirements.txt
 
     - name: Copy service files
       copy:
@@ -86,15 +89,3 @@
       - systemctl enable pypatcher_darkice.service
       - systemctl enable pypatcher_callback.service
       - systemctl enable pypatcher_watchgod.service
-
-    - name: Allow port range 61002-61040/udp
-      community.general.ufw:
-        rule: allow
-        port: 61002:61040
-        proto: udp
-        
-    - name: Allow port 4464/tcp
-      community.general.ufw:
-        rule: allow
-        port: 4464
-        proto: tcp
