@@ -2,6 +2,7 @@
 
 ## Prerequisites
 
+- ansible installed on local machine
 - provision server with ssh access for root
 - local user with ssh keys in home directory (by default this is `sam` user)
 
