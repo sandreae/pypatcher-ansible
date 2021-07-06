@@ -26,14 +26,13 @@
       register: container_id
 
     - name: Copy dependencies from container
-      command: docker cp {{ container_id.stdout}}:build/. /usr/local/bin/
+      command: docker cp {{ container_id.stdout }}:build/. /usr/local/bin/
 
     - name: Fetch lounge-music
       get_url:
         url: "{{ lounge_music_url }}"
         dest: /home/{{user}}/lounge-music.mp3
-        mode: '0440'
-  
+
     - name: Template and send darkice.cfg
       template:
         src: templates/darkice.cfg.j2
@@ -89,3 +88,5 @@
       - systemctl enable pypatcher_darkice.service
       - systemctl enable pypatcher_callback.service
       - systemctl enable pypatcher_watchgod.service
+
+    
