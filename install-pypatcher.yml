@@ -22,7 +22,7 @@
       command: cp /etc/security/limits.d/audio.conf.disabled /etc/security/limits.d/audio.conf
 
     - name: Create pypatcher_deps container
-      command: docker create sandreae/pypatcher_deps:latest
+      command: docker create sandreae/pypatcher_deps:jacktrip-pypatcher
       register: container_id
 
     - name: Copy dependencies from container
