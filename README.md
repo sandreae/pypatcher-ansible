@@ -4,7 +4,7 @@
 
 - ansible installed on local machine
 - provision server with ssh access for root
-- local user with ssh keys in home directory (by default this is `sam` user)
+- local user with ssh keys in home directory (by default this is `jacktrip` user)
 
 ## Run
 
@@ -33,4 +33,4 @@ icecast_password=BadPassWord
 ## TODO
 
 - automate server deploy
-- change requirement for `sam` user
+- change requirement for `jacktrip` user
