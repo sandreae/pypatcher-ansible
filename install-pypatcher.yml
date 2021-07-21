@@ -42,7 +42,7 @@
       git:
         repo: 'https://github.com/noiseorchestra/jacktrip_pypatcher'
         dest: /home/{{user}}/jacktrip_pypatcher
-        version: 2.0.0
+        version: "{{ pypatcher_version }}"
 
     - name: Install pypatcher python dependencies
       command: python3 -m pip install -r /home/{{user}}/jacktrip_pypatcher/requirements.txt
