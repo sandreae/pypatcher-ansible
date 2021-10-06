@@ -55,7 +55,7 @@
       authorized_key:
         user: "{{ user }}"
         state: present
-        key: "{{ copy_local_key }}"
+        key: "{{ public_key }}"
 
     - name: Disable password authentication for root
       lineinfile:
