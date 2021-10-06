@@ -2,7 +2,7 @@
 # DO Community Playbooks: Initial Server Setup
 #################################################
 ---
-- hosts: pypatcher
+- hosts: "{{ variable_host | default('pypatcher') }}"
   become: true
   vars_files:
     - vars/default.yml
