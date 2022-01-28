@@ -14,6 +14,11 @@
         - mpg123
         - python3-pip
         - darkice
+        - libglib2.0-dev 
+        - libncurses5-dev 
+        - ladspa-sdk 
+        - ladspa-sdk-dev
+        - invada-studio-plugins-ladspa
         update_cache: yes
       environment:
         DEBIAN_FRONTEND: noninteractive
