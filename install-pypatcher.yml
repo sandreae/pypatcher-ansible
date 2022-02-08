@@ -3,17 +3,23 @@
   hosts: "{{ variable_host | default('pypatcher') }}"
   become: yes
   vars_files:
-  - vars/default.yml
+    - vars/default.yml
 
   tasks:
     - name: Install dependencies
       apt:
         pkg:
-        - jackd
-        - libjack-jackd2-dev
-        - mpg123
-        - python3-pip
-        - darkice
+          - jackd
+          - libjack-jackd2-dev
+          - mpg123
+          - python3-pip
+          - darkice
+          # ladspa system dendencies
+          - invada-studio-plugins-ladspa
+          - libglib2.0-dev
+          - libncurses5-dev
+          - ladspa-sdk
+          - ladspa-sdk-dev
         update_cache: yes
       environment:
         DEBIAN_FRONTEND: noninteractive
@@ -40,7 +46,7 @@
 
     - name: Git checkout jacktrip_pypatcher
       git:
-        repo: 'https://github.com/noiseorchestra/jacktrip_pypatcher'
+        repo: "https://github.com/noiseorchestra/jacktrip_pypatcher"
         dest: /home/{{user}}/jacktrip_pypatcher
         version: "{{ pypatcher_version }}"
 
@@ -52,15 +58,15 @@
         src: "{{ item }}"
         dest: "/etc/systemd/system/"
       with_fileglob:
-        - "services/*.service"      
-        
+        - "services/*.service"
+
     - name: Install systemd config
       copy:
         src: "{{ item }}"
         dest: "/etc/systemd/"
       with_fileglob:
-        - "templates/*.conf"  
-        
+        - "templates/*.conf"
+
     - name: Make jacktrip_pypatcher config folder
       command: mkdir -p /etc/jacktrip_pypatcher
 
@@ -69,25 +75,25 @@
         src: "{{ item }}"
         dest: "/etc/jacktrip_pypatcher/"
       with_fileglob:
-        - "services/config/*.conf"      
+        - "services/config/*.conf"
 
     - name: Start services
       command: "{{ item }}"
       with_items:
-      - systemctl start jackd.service
-      - systemctl start jacktrip.service
-      - systemctl start pypatcher_darkice.service
-      - systemctl start pypatcher_callback.service
-      - systemctl start pypatcher_watchgod.service
+        - systemctl start jackd.service
+        - systemctl start jacktrip.service
+        - systemctl start pypatcher_darkice.service
+        - systemctl start pypatcher_callback.service
+        - systemctl start pypatcher_watchgod.service
 
     - name: Enable services
       command: "{{ item }}"
       with_items:
-      - systemctl enable jackd.service
-      - systemctl enable jacktrip.service
-      - systemctl enable pypatcher_darkice.service
-      - systemctl enable pypatcher_callback.service
-      - systemctl enable pypatcher_watchgod.service
+        - systemctl enable jackd.service
+        - systemctl enable jacktrip.service
+        - systemctl enable pypatcher_darkice.service
+        - systemctl enable pypatcher_callback.service
+        - systemctl enable pypatcher_watchgod.service
 
     - name: Reboot the machine
       reboot:
