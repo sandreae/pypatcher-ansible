@@ -44,6 +44,21 @@
         src: templates/darkice.cfg.j2
         dest: /etc/darkice.cfg
 
+    - name: Git checkout ng-jackspa
+      git:
+        repo: "https://repo.or.cz/ng-jackspa.git"
+        dest: /home/{{user}}/ng-jackspa
+
+    - name: Build njackspa
+      community.general.make:
+        chdir: /home/{{user}}/ng-jackspa
+        target: njackspa
+
+    - name: Build jackspa-cli
+      community.general.make:
+        chdir: /home/{{user}}/ng-jackspa
+        target: jackspa-cli
+
     - name: Git checkout jacktrip_pypatcher
       git:
         repo: "https://github.com/noiseorchestra/jacktrip_pypatcher"
